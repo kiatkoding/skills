@@ -16,6 +16,10 @@ The [skills CLI](https://github.com/vercel-labs/skills) installs the skill into 
 
 The skill works together with the Kiat Koding MCP server, which gives your agent the tools to create and edit courses. Connect it from Kiat Koding at Koneksi > Agen AI > Hubungkan agen AI, and paste the prompt shown there into your agent.
 
+## License
+
+[MIT](LICENSE).
+
 ## Untuk instruktur
 
 Skill ini membantu agent AI-mu menyusun kelas di Kiat Koding dengan gaya dan aturan yang sama dengan kelas lainnya. Pasang dengan `npx skills add kiatkoding/skills`, lalu hubungkan agent-mu ke Kiat Koding lewat menu Koneksi > Agen AI. Semua yang dibuat agent tersimpan sebagai draf, dan kamu yang memeriksa dan menerbitkannya.
