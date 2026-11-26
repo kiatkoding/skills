@@ -49,7 +49,7 @@ Lessons open in order, and a Submission must pass before the lessons after it op
 - Many Kiat Koding courses teach building with a coding agent. In those, give the learner prompts, not code to type, and show the code the agent wrote: prompts in ```prompt fences, the key part of the agent's code under its file name, the result in ```output fences. Explain only the prompt line that carries a decision, and review the agent's code in a few notes.
 - Do not template. Do not repeat the same sub-headings ("Tujuan", "Langkah", "Penjelasan") in every step, and do not describe an image again in prose.
 - Show real things: screenshots from a real run, real output, real numbers. Never fabricate output, screenshots, versions or measurements. If you have not run something, say what to expect in general terms and mark it for the instructor to verify.
-- Every step shows more than text. Concept steps carry a visual instead of code: ```mermaid diagrams for flows and architecture, Mermaid `pie` or `xychart-beta` charts for numbers, a ```demo for motion or interaction (a slider that changes a result, an animated flow), and `generate_lesson_image` for illustrations or a light meme-style panel in the Kiat Koding look.
+- Every step shows more than text. Concept steps carry a visual instead of code: an ```interactive flow for anything that happens in order (it plays once as it scrolls into view), an ```interactive for a value that changes as the learner acts or code traced line by line, Mermaid `pie` or `xychart-beta` charts for numbers, a Mermaid diagram for a structure where nothing happens, and `generate_lesson_image` for illustrations or a light meme-style panel in the Kiat Koding look.
 - There are no quizzes on the platform. Use a codelab exercise or a Submission instead.
 - Files learners need (starter code as a .zip, datasets, request collections, slides) go up with `create_file_upload`, up to 50 MB each. Put the returned link on its own line in the step that uses the file, where it shows as a download card. Without a shell, list the files for the instructor to add in the editor with Unggah file.
 
@@ -64,8 +64,9 @@ Lesson bodies, codelab steps and Submission briefs are Markdown with GitHub tabl
 - Code fences get a language label and a copy button.
 - ```prompt is a prompt to paste into an AI assistant. ```output is the result the learner should see.
 - A ```video fence holding one YouTube, MP4, WebM or `.m3u8` link becomes the course player.
-- ```mermaid draws a diagram. Use `flowchart TD` and short labels so it fits a phone.
-- ```demo runs an interactive demo: an HTML fragment with SVG or canvas, CSS and JavaScript in an isolated frame. It must follow the Kiat Koding design system, with colours, fonts and spacing taken only from the variables the frame provides, and the server refuses colour values and font names. See [references/demo.md](references/demo.md).
+- ```mermaid draws a chart or a structure diagram. Use `flowchart TD` and short labels so it fits a phone. `sequenceDiagram` and `stateDiagram` are refused: a flow in order is an ```interactive flow.
+- ```interactive runs an HTML fragment with SVG or canvas, CSS and JavaScript in an isolated frame, with a kit for flow diagrams, steppers and auto-playing sequences. It starts with a header the server checks (mode, shows, teaches, task, answer, mirrors), shows the step's real code or data, moves where something changes, and takes every colour, font and spacing from the Kiat Koding design system. See [references/interactive.md](references/interactive.md).
+- A code block followed by an ```output names its language (python, javascript, bash), never `text`: only code that ran has output.
 - `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]` and `> [!CAUTION]` become labelled callouts.
 - An image line followed by a line all in italics becomes a captioned figure. Write the caption as a plain sentence about what the image shows, never in a "Label: text" pattern.
 
