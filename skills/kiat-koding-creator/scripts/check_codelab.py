@@ -3,10 +3,12 @@
 
 Usage: python3 check_codelab.py steps.json
 steps.json holds the `steps` array (or an object with a `steps` field). Exit code 0 means the gate would accept it.
-This mirrors the server's gate (crates/server/src/mcp/gate.rs). The server stays the judge: if they disagree, it wins.
+This mirrors the server's gate and demo checks (crates/server/src/mcp/gate.rs and demo.rs). The server stays the judge:
+if they disagree, it wins.
 """
 
 import json
+import re
 import sys
 
 STEP_WORDS = 1000
@@ -15,6 +17,43 @@ PARAGRAPH_WORDS = 70
 WORDS_PER_LINE = 20
 VISUAL_WORDS = 200
 BLOCK_LINES = 10
+DEMO_CHARS = 30000
+CDN = "https://cdnjs.cloudflare.com/"
+
+NAMES = (
+    r"black|white|red|green|blue|yellow|orange|purple|pink|brown|gr[ae]y|cyan|magenta|navy|teal|maroon|olive|"
+    r"lime|silver|gold|crimson|coral|tomato|salmon|violet|indigo|aqua|fuchsia|beige|khaki|(?:light|dark)(?:gr[ae]y|blue|red|green)|"
+    r"steelblue|skyblue|royalblue|orangered|slategr[ae]y|whitesmoke|gainsboro"
+)
+HEX_VALUE = r"(#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3,4}))\b"
+# A hex colour as a value, not a number in text ("komentar #123").
+HEX = [re.compile(r"[:=(,\"'`]\s*" + HEX_VALUE, re.I), re.compile(r":[^;{}<>\"'\n]*\s" + HEX_VALUE, re.I)]
+# A preceding dot is a library helper fed from kk.color, such as d3.rgb(kk.color.ink).
+FUNCTION = re.compile(r"(?:^|[^.\w-])((?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\()", re.I)
+NAMED = [
+    re.compile(
+        r"(?:^|[;{\s\"'])(?:color|background(?:-color)?|border(?:-(?:top|right|bottom|left))?(?:-color)?|outline(?:-color)?|fill|stroke|stop-color|flood-color|caret-color|accent-color|text-decoration-color|box-shadow|text-shadow)\s*:[^;}\"'<>]*?\b("
+        + NAMES
+        + r")\b",
+        re.I,
+    ),
+    re.compile(r"\b(?:fill|stroke|stop-color|flood-color|color|bgcolor)\s*=\s*[\"']\s*(" + NAMES + r")\s*[\"']", re.I),
+    re.compile(
+        r"\b(?:fillStyle|strokeStyle|shadowColor|color|background|backgroundColor|fill|stroke)\s*[:=]\s*[\"'`]\s*(" + NAMES + r")\s*[\"'`]",
+        re.I,
+    ),
+    re.compile(
+        r"\.(?:attr|style)\(\s*[\"'](?:fill|stroke|color|background(?:-color)?|stop-color)[\"']\s*,\s*[\"']\s*(" + NAMES + r")\s*[\"']",
+        re.I,
+    ),
+]
+FONT = re.compile(r"(?:font-family|fontFamily)\s*[:=]\s*[\"'`]?\s*([^;}\"'`\n]*)", re.I)
+SCRIPT_SRC = re.compile(r"<script\b[^>]*\bsrc\s*=\s*[\"']?\s*([^\"'\s>]+)", re.I)
+OUTSIDE = re.compile(r"(?:\b(?:src|href|xlink:href)\s*=\s*[\"']?|url\(\s*[\"']?)\s*((?:https?:)?//[^\"'\s)>]*)", re.I)
+TAG = re.compile(r"<\s*(!doctype|html|head|body|iframe|object|embed|link|base|meta)\b", re.I)
+NETWORK = re.compile(r"\b(fetch\s*\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|importScripts)")
+STORAGE = re.compile(r"\b(localStorage|sessionStorage|indexedDB|document\.cookie)\b")
+DIALOG = re.compile(r"(?:^|[^.\w])((?:alert|confirm|prompt)\s*\()|\bwindow\.(?:alert|confirm|prompt)\b")
 
 
 def fence_open(line):
@@ -92,7 +131,7 @@ def measure(body):
             elif tag == "output":
                 s["unexplained"] = False
                 kind = "output"
-            elif tag in ("mermaid", "video"):
+            elif tag in ("mermaid", "video", "demo"):
                 m["diagrams"] += 1
                 kind = "other"
             else:
@@ -127,6 +166,71 @@ def measure(body):
     return m
 
 
+def demo_sources(body):
+    found, fence = [], None
+    for raw in body.split("\n"):
+        line = raw.strip()
+        if fence:
+            c, n, src = fence
+            if line and all(x == c for x in line) and len(line) >= n:
+                if src is not None:
+                    found.append("\n".join(src))
+                fence = None
+            elif src is not None:
+                src.append(raw)
+            continue
+        opened = fence_open(line)
+        if opened:
+            c, n, info = opened
+            fence = (c, n, [] if (info.split() or [""])[0].lower() == "demo" else None)
+    if fence and fence[2] is not None:
+        found.append("\n".join(fence[2]))
+    return found
+
+
+def first(pattern, src):
+    m = pattern.search(src)
+    return m.group(1).strip() if m and m.group(1) else None
+
+
+def demo_problems(src):
+    if not src.strip():
+        return ["is empty. Fill it with an HTML fragment: <svg> or <canvas>, <style> and <script>."]
+    out = []
+    if len(src) > DEMO_CHARS:
+        out.append(f"has {len(src)} characters, the limit is {DEMO_CHARS}. Simplify it or make two demos.")
+    colour = next((v for v in (first(p, src) for p in HEX) if v), None)
+    if not colour:
+        f = first(FUNCTION, src)
+        colour = f.rstrip("(") if f else next((v for v in (first(p, src) for p in NAMED) if v), None)
+    if colour:
+        out.append(f"writes a colour value (`{colour}`). Take colours from the Kiat Koding design system: var(--color-...) in CSS, kk.color and kk.series in a script.")
+    for m in FONT.finditer(src):
+        v = m.group(1).strip()
+        low = v.lower()
+        if not (low.startswith(("var(", "${", "kk.font")) or low in ("inherit", "initial", "unset", "revert")):
+            out.append(f"sets its own font (`{v}`). Use var(--font-body), var(--font-display) or var(--font-mono), class .mono, or kk.font on a canvas.")
+            break
+    script = next((m.group(1) for m in SCRIPT_SRC.finditer(src) if not m.group(1).startswith(CDN)), None)
+    if script:
+        out.append(f"loads a script from `{script}`. Outside scripts come only from {CDN}.")
+    outside = next((m.group(1) for m in OUTSIDE.finditer(src) if not m.group(1).startswith(CDN)), None)
+    if outside:
+        out.append(f"links an outside address (`{outside}`). Images come from /uploads/ paths, and a demo cannot open other sites.")
+    tag = first(TAG, src)
+    if tag:
+        out.append(f"uses <{tag.lower()}>. Write only the demo's content, without <html>, <head>, <body>, <meta> or <link>.")
+    net = first(NETWORK, src)
+    if net:
+        out.append(f"uses `{net}`. A demo has no network: write the data into the script.")
+    store = first(STORAGE, src)
+    if store:
+        out.append(f"uses `{store}`. A demo has no storage: keep its state in variables.")
+    if DIALOG.search(src):
+        out.append("uses alert, confirm or prompt, which the frame blocks. Show the message inside the demo.")
+    return out
+
+
 def check(steps):
     problems, rows = [], []
     total, hands_on, result = 0, False, False
@@ -142,6 +246,10 @@ def check(steps):
         rows.append(f"step {n:2}: {m['prose']:4} words, {shown:3} code+output lines, {visuals} visuals, prose allowed {budget:4}  {step.get('title', '')}")
         if m["prose"] > STEP_WORDS:
             problems.append(f"step {n}: {m['prose']} words of prose, the limit is {STEP_WORDS}. Start a new step where the context changes.")
+        demos = demo_sources(step.get("body") or "")
+        for k, src in enumerate(demos, 1):
+            name = f"demo {k}" if len(demos) > 1 else "the demo"
+            problems.extend(f"step {n}: {name} {p}" for p in demo_problems(src))
         for p, w in m["long"]:
             problems.append(f"step {n}: paragraph {p} has {w} words, the limit is {PARAGRAPH_WORDS}. Split it.")
         for k, lines in enumerate(m["blocks"], 1):
@@ -156,7 +264,7 @@ def check(steps):
         elif shown + visuals > 0 and carried < m["prose"]:
             problems.append(
                 f"step {n}: {m['prose']} words of prose, but its {shown} lines of code and output and {visuals} visuals carry only {carried}. "
-                f"A line of code or output carries {WORDS_PER_LINE} words, a diagram, chart, video or image {VISUAL_WORDS}. "
+                f"A line of code or output carries {WORDS_PER_LINE} words, a diagram, chart, demo, video or image {VISUAL_WORDS}. "
                 "Show more real code, output or visuals, or cut the prose."
             )
     if total > LESSON_WORDS:

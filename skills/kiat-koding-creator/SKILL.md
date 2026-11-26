@@ -18,8 +18,8 @@ Kiat Koding is an Indonesian course platform for programmers. Instructors build 
 
 1. Ask, in one message, only for what you cannot infer: the topic and the result learners should reach, who the learners are and what they already know, the level, and whether a graded project (Submission) belongs in the course. Skip the questions the user already answered.
 2. Look before you write. Call `list_categories`, and `get_course` on one of the instructor's existing courses to match their tone and structure.
-3. Propose the outline: the chapters, and for each lesson its kind and one line on what it covers. Wait for the user's go-ahead once. After that, build the whole draft without stopping for review at each lesson, since the instructor reviews it in the admin.
-4. Build in order: `create_course` with the course info, `add_section` per chapter, then `add_lesson` per lesson.
+3. Propose the outline: the chapters, at least 3 lessons each, and for each lesson its kind and one line on what it covers. A topic too small for 3 lessons joins a neighbouring chapter. Wait for the user's go-ahead once. After that, build the whole draft without stopping for review at each lesson, since the instructor reviews it in the admin.
+4. Build in order: `create_course` with the course info, then chapter by chapter: `add_section`, then that chapter's lessons with `add_lesson`. The server refuses `add_section` while the last chapter has fewer than 3 lessons, and refuses `delete_lesson` or `reorder_course` when they would leave a chapter with 1 or 2.
 5. Once the title and summary are settled, call `generate_course_covers` with the course's `course_id`. The instructor picks one of the options in the admin.
 6. Hand over: give the `admin_url`, list what is left for the instructor (cover, price if they did not give one, payment method, live sessions, template zip, publishing), and name anything you skipped or were unsure about.
 
@@ -49,7 +49,7 @@ Lessons open in order, and a Submission must pass before the lessons after it op
 - Many Kiat Koding courses teach building with a coding agent. In those, give the learner prompts, not code to type, and show the code the agent wrote: prompts in ```prompt fences, the key part of the agent's code under its file name, the result in ```output fences. Explain only the prompt line that carries a decision, and review the agent's code in a few notes.
 - Do not template. Do not repeat the same sub-headings ("Tujuan", "Langkah", "Penjelasan") in every step, and do not describe an image again in prose.
 - Show real things: screenshots from a real run, real output, real numbers. Never fabricate output, screenshots, versions or measurements. If you have not run something, say what to expect in general terms and mark it for the instructor to verify.
-- Every step shows more than text. Concept steps carry a visual instead of code: ```mermaid diagrams for flows and architecture, Mermaid `pie` or `xychart-beta` charts for numbers, and `generate_lesson_image` for illustrations or a light meme-style panel in the Kiat Koding look.
+- Every step shows more than text. Concept steps carry a visual instead of code: ```mermaid diagrams for flows and architecture, Mermaid `pie` or `xychart-beta` charts for numbers, a ```demo for motion or interaction (a slider that changes a result, an animated flow), and `generate_lesson_image` for illustrations or a light meme-style panel in the Kiat Koding look.
 - There are no quizzes on the platform. Use a codelab exercise or a Submission instead.
 - Files learners need (starter code as a .zip, datasets, request collections, slides) go up with `create_file_upload`, up to 50 MB each. Put the returned link on its own line in the step that uses the file, where it shows as a download card. Without a shell, list the files for the instructor to add in the editor with Unggah file.
 
@@ -65,6 +65,7 @@ Lesson bodies, codelab steps and Submission briefs are Markdown with GitHub tabl
 - ```prompt is a prompt to paste into an AI assistant. ```output is the result the learner should see.
 - A ```video fence holding one YouTube, MP4, WebM or `.m3u8` link becomes the course player.
 - ```mermaid draws a diagram. Use `flowchart TD` and short labels so it fits a phone.
+- ```demo runs an interactive demo: an HTML fragment with SVG or canvas, CSS and JavaScript in an isolated frame. It must follow the Kiat Koding design system, with colours, fonts and spacing taken only from the variables the frame provides, and the server refuses colour values and font names. See [references/demo.md](references/demo.md).
 - `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]` and `> [!CAUTION]` become labelled callouts.
 - An image line followed by a line all in italics becomes a captioned figure. Write the caption as a plain sentence about what the image shows, never in a "Label: text" pattern.
 

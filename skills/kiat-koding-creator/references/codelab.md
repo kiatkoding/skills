@@ -12,7 +12,8 @@ The server checks every codelab an agent saves with `add_lesson` or `update_less
 - Paragraphs of at most 70 words. Each list item counts as its own paragraph.
 - A step with a ```prompt fence also shows the code the agent wrote, a diff, or the command it ran.
 - A code block holds at most 10 lines, and two code blocks never follow each other without prose between them. An ```output block may follow its command directly. Output blocks have no line limit.
-- Prose is carried by what the step shows: every 20 words need a line of code or output, or every 200 words a visual (a Mermaid diagram or chart, a video, an image). Prompt, Mermaid and video lines do not count as code lines. Text alone is refused.
+- Prose is carried by what the step shows: every 20 words need a line of code or output, or every 200 words a visual (a Mermaid diagram or chart, a demo, a video, an image). Prompt, Mermaid, demo and video lines do not count as code lines. Text alone is refused.
+- A ```demo follows the Kiat Koding design system: no colour values or font names, no outside scripts but cdnjs, no network or storage. See [demo.md](demo.md).
 - A lesson with code shows a real result: an ```output fence or a screenshot.
 
 Fix every point in the refusal and send the lesson again. Changing a lesson's steps checks the whole lesson, so an older long lesson has to be rewritten before any of its steps can change. The limits are ceilings, not targets: most pages carry 400 to 800 words.
@@ -22,7 +23,7 @@ Fix every point in the refusal and send the lesson again. Changing a lesson's st
 What the gate counts:
 
 - Prose is every word outside fences, tables and image lines. Captions, callouts, list items, headings and inline code all count. A link counts its text, not its address.
-- Code and output lines are the non-empty lines inside code fences and ```output fences. Lines in ```prompt, ```mermaid and ```video fences are not code.
+- Code and output lines are the non-empty lines inside code fences and ```output fences. Lines in ```prompt, ```mermaid, ```demo and ```video fences are not code, and a demo has no line limit.
 - A step's prose allowance is 20 words per line of code and output plus 200 words per visual, never more than 1,000. One command with two lines of output allows 60 words. Add a diagram and it allows 260.
 - A concept part needs a visual for every 200 words of its reasons. A page that mixes concept and code adds both allowances together.
 
@@ -39,7 +40,8 @@ The refusals that come up most, and what fixes them:
 | A short command with a long explanation | Put the why next to a diagram that shows it, show the real output, or cut the prose. Never pad code or output to raise the allowance. |
 | A code block over 10 lines | Split it where the idea changes (a request's state and its questions, the loop and the error branch) and explain each part right under it. |
 | Two code blocks in a row | Put a sentence between them: what the next block does, or how to run the one before. |
-| A step that is text only, such as a checklist, a table or a summary | A table is not a visual. Add a ```mermaid diagram or chart, or an image from `generate_lesson_image`. |
+| A step that is text only, such as a checklist, a table or a summary | A table is not a visual. Add a ```mermaid diagram or chart, a ```demo, or an image from `generate_lesson_image`. |
+| A demo that writes a colour or a font | Take it from the design system: `var(--color-...)` and `var(--font-...)` in CSS, `kk.color`, `kk.series` and `kk.font` in a script. See [demo.md](demo.md). |
 | A paragraph over 70 words | Split it where the second idea starts. |
 | A prompt without code | Show the code the agent wrote, a diff, or the command it ran. |
 
@@ -152,6 +154,7 @@ A step that explains an idea instead of building something needs no code, but it
 
 - A ```mermaid diagram for a flow, a sequence or a structure (`flowchart TD`, `sequenceDiagram`, `stateDiagram-v2`).
 - A chart for numbers, drawn by Mermaid so every number is exact: `pie` for shares, `xychart-beta` for bars or lines (time, cost, accuracy). For dates in order, use a `flowchart TD` with one box per date: Mermaid's `timeline` draws its text too small to read.
+- A ```demo for an idea that moves or responds: a slider that changes a result, a flow that animates step by step, an algorithm walking through its data. It must follow the Kiat Koding design system ([demo.md](demo.md)).
 - An illustration from `generate_lesson_image` for an idea that is hard to picture.
 - A light meme-style panel from `generate_lesson_image` when a joke makes the point stick, such as the moment a learner recognises from their own work. Draw an original joke in the Kiat Koding look. Never copy a known meme template or show a real person.
 
