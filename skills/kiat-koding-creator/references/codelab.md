@@ -123,7 +123,7 @@ About 100 words of prose around 17 lines of code and output, each code block exp
 A step that explains an idea instead of building something needs no code, but it carries a visual where a hands-on step carries code:
 
 - A ```mermaid diagram for a flow, a sequence or a structure (`flowchart TD`, `sequenceDiagram`, `stateDiagram-v2`).
-- A chart for numbers, drawn by Mermaid so every number is exact: `pie` for shares, `xychart-beta` for bars or lines (time, cost, accuracy).
+- A chart for numbers, drawn by Mermaid so every number is exact: `pie` for shares, `xychart-beta` for bars or lines (time, cost, accuracy). For dates in order, use a `flowchart TD` with one box per date: Mermaid's `timeline` draws its text too small to read.
 - An illustration from `generate_lesson_image` for an idea that is hard to picture.
 - A light meme-style panel from `generate_lesson_image` when a joke makes the point stick, such as the moment a learner recognises from their own work. Draw an original joke in the Kiat Koding look. Never copy a known meme template or show a real person.
 
