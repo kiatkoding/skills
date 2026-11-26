@@ -18,6 +18,34 @@ The server checks every codelab an agent saves with `add_lesson` or `update_less
 
 Fix every point in the refusal and send the lesson again. Changing a lesson's steps checks the whole lesson, so an older long lesson has to be rewritten before any of its steps can change. The limits are ceilings, not targets: most steps need 80 to 200 words.
 
+## Passing the gate the first time
+
+What the gate counts:
+
+- Prose is every word outside fences, tables and image lines. Captions, callouts, list items, headings and inline code all count. A link counts its text, not its address.
+- Code and output lines are the non-empty lines inside code fences and ```output fences. Lines in ```prompt, ```mermaid and ```video fences are not code.
+- A step with code or a prompt allows 20 words of prose per line of code and output, never more than 250. One command with two lines of output allows 60 words. A ten-line block with five lines of output allows 250.
+- A step with a diagram or an image and no code has no per-line allowance, only the 250-word cap. That is where the reasons go.
+
+Before sending a lesson, write its `steps` array to a JSON file and run the checker that ships with this skill. It mirrors the server's rules, prints each step's words, lines and allowance, and lists every problem the server would report:
+
+```bash
+python3 <this skill's folder>/scripts/check_codelab.py steps.json
+```
+
+The refusals that come up most, and what fixes them:
+
+| Refusal | Fix |
+|---|---|
+| A short command with a long explanation | Move the why into a concept step before it, with a diagram. Keep the hands-on step to the goal, the command, the real output and a note or two. Never pad code or output to raise the allowance. |
+| A code block over 10 lines | Split it where the idea changes (a request's state and its questions, the loop and the error branch) and explain each part right under it. |
+| Two code blocks in a row | Put a sentence between them: what the next block does, or how to run the one before. |
+| A step that is text only, such as a checklist, a table or a summary | A table is not a visual. Add a ```mermaid diagram or chart, or an image from `generate_lesson_image`. |
+| A paragraph over 70 words | Split it where the second idea starts. |
+| A prompt without code | Show the code the agent wrote, a diff, or the command it ran. |
+
+Plan the split before writing: one concept step with a visual for the idea, then one hands-on step per command or block group. A lesson of 10 to 20 short steps passes more easily than 5 long ones, and reads better.
+
 ## Steps
 
 - One step is one task the learner finishes before moving on, and it ends in a result they can see. If a step needs two different results, split it.
