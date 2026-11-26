@@ -1,6 +1,6 @@
 ---
 name: kiat-koding-creator
-description: Build and edit courses on Kiat Koding (kiatkoding.com) through its kiat-koding-creator MCP server. Covers planning a course, writing codelab, text and video lessons, designing graded Submissions on the learner's computer or in the Coding Lab, covers and screenshots, and Kiat Koding's Indonesian writing style. Use when asked to create, outline, write, extend, fix or review a Kiat Koding course or lesson.
+description: Build and edit courses on Kiat Koding (kiatkoding.com) through its kiat-koding-creator MCP server. Covers planning a course, writing codelab and video lessons, designing graded Submissions on the learner's computer or in the Coding Lab, covers and screenshots, and Kiat Koding's Indonesian writing style. Use when asked to create, outline, write, extend, fix or review a Kiat Koding course or lesson.
 ---
 
 # Kiat Koding course creator
@@ -35,8 +35,7 @@ Kiat Koding is an Indonesian course platform for programmers. Instructors build 
 
 ## Choosing a lesson kind
 
-- `codelab`: anything the learner does, such as building, configuring or practising. It is the default for hands-on work. See [references/codelab.md](references/codelab.md).
-- `text`: reading only, for concepts, background and comparisons.
+- `codelab`: anything the learner does or reads, such as building, configuring, practising, or concepts, background and comparisons. There is no text lesson kind: a reading lesson is a codelab with one step per section, and a short one may be a single step. See [references/codelab.md](references/codelab.md).
 - `video`: when the instructor has a recording. Link it as a YouTube link or ID, an MP4 or WebM link, or an HLS `.m3u8` link. Never invent a video link.
 - `submission`: a graded project, usually at the end of a chapter or of the course. See [references/submission.md](references/submission.md).
 - Live sessions are added by the instructor in the admin.

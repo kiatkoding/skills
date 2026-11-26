@@ -1,6 +1,6 @@
 # Writing a codelab
 
-A codelab (`kind: codelab`, with `steps`) is a hands-on tutorial in numbered steps, in the style of Google Codelabs. The learner sees one step at a time with the list of steps beside it, and marks the lesson done on the last step. Use it for anything the learner does.
+A codelab (`kind: codelab`, with `steps`) is a hands-on tutorial in numbered steps, in the style of Google Codelabs. The learner sees one step at a time with the list of steps beside it, and marks the lesson done on the last step. Use it for anything the learner does, and for reading lessons too (there is no text lesson kind): there each step is one section of the explanation, titled by what it explains. A codelab with a single step shows as a plain page, with no step list.
 
 ## Steps
 
