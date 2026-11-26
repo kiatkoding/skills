@@ -45,8 +45,9 @@ Lessons open in order, and a Submission must pass before the lessons after it op
 ## Content principles
 
 - Concepts before hands-on. Explain every technical term in plain words where it first appears.
-- Many Kiat Koding courses teach building with a coding agent. In those, give the learner prompts, not code to type: put prompts in ```prompt fences and the result they should see in ```output fences. Explain why the important lines of a prompt are written the way they are, and review what the agent produced.
-- Narrate, do not template. Do not repeat the same sub-headings ("Tujuan", "Langkah", "Penjelasan") in every step. Write prose that moves from goal to action to result to explanation.
+- Code and real output carry a lesson, prose frames them. A step is the goal in a sentence or two, the prompt or the code, the command, the real output, then a few short notes on the lines that matter. The server refuses codelabs that read long or show little code: see the gate in [references/codelab.md](references/codelab.md).
+- Many Kiat Koding courses teach building with a coding agent. In those, give the learner prompts, not code to type, and show the code the agent wrote: prompts in ```prompt fences, the key part of the agent's code under its file name, the result in ```output fences. Explain only the prompt line that carries a decision, and review the agent's code in a few notes.
+- Do not template. Do not repeat the same sub-headings ("Tujuan", "Langkah", "Penjelasan") in every step, and do not describe an image again in prose.
 - Show real things: screenshots from a real run, real output, real numbers. Never fabricate output, screenshots, versions or measurements. If you have not run something, say what to expect in general terms and mark it for the instructor to verify.
 - Use ```mermaid diagrams for flows and architecture, and `generate_lesson_image` for concept illustrations in the Kiat Koding look.
 - There are no quizzes on the platform. Use a codelab exercise or a Submission instead.
@@ -76,6 +77,7 @@ Lesson bodies, codelab steps and Submission briefs are Markdown with GitHub tabl
 ## Before handing over
 
 - Every lesson has content, and every codelab step has an honest minute estimate.
+- Every hands-on step shows its code and its real output, and the prose around them is short (the gate holds the limits).
 - Every term is explained where it first appears, and nothing claims a result you did not see.
 - Prompts are in ```prompt fences and expected results in ```output fences.
 - Submissions have a brief and milestones written as described in the Submission reference.
