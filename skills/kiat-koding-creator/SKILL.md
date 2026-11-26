@@ -49,7 +49,7 @@ Lessons open in order, and a Submission must pass before the lessons after it op
 - Many Kiat Koding courses teach building with a coding agent. In those, give the learner prompts, not code to type, and show the code the agent wrote: prompts in ```prompt fences, the key part of the agent's code under its file name, the result in ```output fences. Explain only the prompt line that carries a decision, and review the agent's code in a few notes.
 - Do not template. Do not repeat the same sub-headings ("Tujuan", "Langkah", "Penjelasan") in every step, and do not describe an image again in prose.
 - Show real things: screenshots from a real run, real output, real numbers. Never fabricate output, screenshots, versions or measurements. If you have not run something, say what to expect in general terms and mark it for the instructor to verify.
-- Use ```mermaid diagrams for flows and architecture, and `generate_lesson_image` for concept illustrations in the Kiat Koding look.
+- Every step shows more than text. Concept steps carry a visual instead of code: ```mermaid diagrams for flows and architecture, Mermaid `pie` or `xychart-beta` charts for numbers, and `generate_lesson_image` for illustrations or a light meme-style panel in the Kiat Koding look.
 - There are no quizzes on the platform. Use a codelab exercise or a Submission instead.
 - Files learners need (starter code as a .zip, datasets, request collections, slides) go up with `create_file_upload`, up to 50 MB each. Put the returned link on its own line in the step that uses the file, where it shows as a download card. Without a shell, list the files for the instructor to add in the editor with Unggah file.
 

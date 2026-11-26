@@ -12,6 +12,7 @@ The server checks every codelab an agent saves with `add_lesson` or `update_less
 - Paragraphs of at most 70 words. Each list item counts as its own paragraph.
 - A step with a ```prompt fence also shows the code the agent wrote, a diff, or the command it ran.
 - A code block holds at most 10 lines, and two code blocks never follow each other without prose between them. An ```output block may follow its command directly. Output blocks have no line limit.
+- Every step shows something besides prose: a hands-on step its code and output, a concept step a visual (see Concept steps). Text alone is refused.
 - A step with code or a prompt carries a line of code or output for every 20 words of its prose. Prompt, Mermaid and video lines do not count as code.
 - A lesson with code shows a real result: an ```output fence or a screenshot.
 
@@ -119,7 +120,14 @@ About 100 words of prose around 17 lines of code and output, each code block exp
 
 ## Concept steps
 
-A step that explains an idea instead of building something has no code, so only the length limits apply. Keep it to what the next hands-on step needs: a short explanation, a diagram or an illustration, and a small example when one exists (a request, a snippet). The learner should run something in the course's first or second lesson, not after a chapter of theory.
+A step that explains an idea instead of building something needs no code, but it carries a visual where a hands-on step carries code:
+
+- A ```mermaid diagram for a flow, a sequence or a structure (`flowchart TD`, `sequenceDiagram`, `stateDiagram-v2`).
+- A chart for numbers, drawn by Mermaid so every number is exact: `pie` for shares, `xychart-beta` for bars or lines (time, cost, accuracy).
+- An illustration from `generate_lesson_image` for an idea that is hard to picture.
+- A light meme-style panel from `generate_lesson_image` when a joke makes the point stick, such as the moment a learner recognises from their own work. Draw an original joke in the Kiat Koding look. Never copy a known meme template or show a real person.
+
+Keep the step to what the next hands-on step needs, with a small example when one exists (a request, a snippet). The learner should run something in the course's first or second lesson, not after a chapter of theory.
 
 ## Visuals
 
