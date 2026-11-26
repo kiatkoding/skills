@@ -8,15 +8,14 @@ Code and real output carry a codelab. Prose frames them. A learner who skims onl
 
 The server checks every codelab an agent saves with `add_lesson` or `update_lesson`, and refuses it with the full list of problems when it reads long or shows little code. Prose is everything outside fences, tables and image lines.
 
-- At most 250 words of prose per step, and 3,000 per lesson.
+- At most 1,000 words of prose per step, and 3,000 per lesson.
 - Paragraphs of at most 70 words. Each list item counts as its own paragraph.
 - A step with a ```prompt fence also shows the code the agent wrote, a diff, or the command it ran.
 - A code block holds at most 10 lines, and two code blocks never follow each other without prose between them. An ```output block may follow its command directly. Output blocks have no line limit.
-- Every step shows something besides prose: a hands-on step its code and output, a concept step a visual (see Concept steps). Text alone is refused.
-- A step with code or a prompt carries a line of code or output for every 20 words of its prose. Prompt, Mermaid and video lines do not count as code.
+- Prose is carried by what the step shows: every 20 words need a line of code or output, or every 200 words a visual (a Mermaid diagram or chart, a video, an image). Prompt, Mermaid and video lines do not count as code lines. Text alone is refused.
 - A lesson with code shows a real result: an ```output fence or a screenshot.
 
-Fix every point in the refusal and send the lesson again. Changing a lesson's steps checks the whole lesson, so an older long lesson has to be rewritten before any of its steps can change. The limits are ceilings, not targets: most steps need 80 to 200 words.
+Fix every point in the refusal and send the lesson again. Changing a lesson's steps checks the whole lesson, so an older long lesson has to be rewritten before any of its steps can change. The limits are ceilings, not targets: most pages carry 400 to 800 words.
 
 ## Passing the gate the first time
 
@@ -24,8 +23,8 @@ What the gate counts:
 
 - Prose is every word outside fences, tables and image lines. Captions, callouts, list items, headings and inline code all count. A link counts its text, not its address.
 - Code and output lines are the non-empty lines inside code fences and ```output fences. Lines in ```prompt, ```mermaid and ```video fences are not code.
-- A step with code or a prompt allows 20 words of prose per line of code and output, never more than 250. One command with two lines of output allows 60 words. A ten-line block with five lines of output allows 250.
-- A step with a diagram or an image and no code has no per-line allowance, only the 250-word cap. That is where the reasons go.
+- A step's prose allowance is 20 words per line of code and output plus 200 words per visual, never more than 1,000. One command with two lines of output allows 60 words. Add a diagram and it allows 260.
+- A concept part needs a visual for every 200 words of its reasons. A page that mixes concept and code adds both allowances together.
 
 Before sending a lesson, write its `steps` array to a JSON file and run the checker that ships with this skill. It mirrors the server's rules, prints each step's words, lines and allowance, and lists every problem the server would report:
 
@@ -37,21 +36,22 @@ The refusals that come up most, and what fixes them:
 
 | Refusal | Fix |
 |---|---|
-| A short command with a long explanation | Move the why into a concept step before it, with a diagram. Keep the hands-on step to the goal, the command, the real output and a note or two. Never pad code or output to raise the allowance. |
+| A short command with a long explanation | Put the why next to a diagram that shows it, show the real output, or cut the prose. Never pad code or output to raise the allowance. |
 | A code block over 10 lines | Split it where the idea changes (a request's state and its questions, the loop and the error branch) and explain each part right under it. |
 | Two code blocks in a row | Put a sentence between them: what the next block does, or how to run the one before. |
 | A step that is text only, such as a checklist, a table or a summary | A table is not a visual. Add a ```mermaid diagram or chart, or an image from `generate_lesson_image`. |
 | A paragraph over 70 words | Split it where the second idea starts. |
 | A prompt without code | Show the code the agent wrote, a diff, or the command it ran. |
 
-Plan the split before writing: one concept step with a visual for the idea, then one hands-on step per command or block group. A lesson of 10 to 20 short steps passes more easily than 5 long ones, and reads better.
+Plan the pages before writing: one page per context, usually 5 to 7 per lesson. Learners click Next to move to a new context, not to read the next paragraph of the same one, so a lesson of 15 short pages is worse than 6 long ones.
 
 ## Steps
 
-- One step is one task the learner finishes before moving on, and it ends in a result they can see. If a step needs two different results, split it.
+- One step is one page about one context: a concept with its examples, or a task with its prompt, code, command and output. It may scroll as long as it stays on that context. Start a new step only where the context or the runnable goal changes. Most lessons have 5 to 7 steps, rarely more than 8.
+- A long page is split into parts with `###` subheadings, one per sub-task or idea, so the learner can scan it. Each part follows the beats below.
 - The title is short and imperative: "Siapkan project", "Minta agent membuat endpoint login", "Uji dengan data kosong".
 - `minutes` is an honest estimate of the time a learner at the course's level needs, including waiting for an agent or a build. Do not round everything to 5.
-- When an explanation needs more room, split it over more steps, one idea per step, each with its own code or visual. Never make a step longer to fit it. A codelab holds at most 60 steps, and a lesson that needs more than 3,000 words of prose is two lessons.
+- A typical page carries 400 to 800 words of prose, at most 1,000, and runs two to five screens. A lesson that needs more than 3,000 words of prose is two lessons.
 - The first step says what the learner will have at the end, ideally by showing it (the final output or a screenshot), and what they need ready. The last step sums up what they built and what comes next.
 
 ## Inside a step

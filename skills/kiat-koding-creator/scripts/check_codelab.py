@@ -9,10 +9,11 @@ This mirrors the server's gate (crates/server/src/mcp/gate.rs). The server stays
 import json
 import sys
 
-STEP_WORDS = 250
+STEP_WORDS = 1000
 LESSON_WORDS = 3000
 PARAGRAPH_WORDS = 70
 WORDS_PER_LINE = 20
+VISUAL_WORDS = 200
 BLOCK_LINES = 10
 
 
@@ -135,11 +136,12 @@ def check(steps):
         total += m["prose"]
         hands_on |= m["code"] > 0 or m["prompt"]
         result |= m["output"] > 0 or m["images"] > 0
-        has_code = m["code"] > 0 or m["prompt"]
-        budget = min(STEP_WORDS, shown * WORDS_PER_LINE) if has_code else STEP_WORDS
-        rows.append(f"step {n:2}: {m['prose']:3} words, {shown:2} code+output lines, prose allowed {budget:3}  {step.get('title', '')}")
+        visuals = m["images"] + m["diagrams"]
+        carried = shown * WORDS_PER_LINE + visuals * VISUAL_WORDS
+        budget = min(STEP_WORDS, carried)
+        rows.append(f"step {n:2}: {m['prose']:4} words, {shown:3} code+output lines, {visuals} visuals, prose allowed {budget:4}  {step.get('title', '')}")
         if m["prose"] > STEP_WORDS:
-            problems.append(f"step {n}: {m['prose']} words of prose, the limit is {STEP_WORDS}. Split the explanation over more steps.")
+            problems.append(f"step {n}: {m['prose']} words of prose, the limit is {STEP_WORDS}. Start a new step where the context changes.")
         for p, w in m["long"]:
             problems.append(f"step {n}: paragraph {p} has {w} words, the limit is {PARAGRAPH_WORDS}. Split it.")
         for k, lines in enumerate(m["blocks"], 1):
@@ -151,11 +153,11 @@ def check(steps):
             problems.append(f"step {n} is text only. A concept step needs a ```mermaid diagram or chart or an image, a hands-on step its code and output. A table is not a visual.")
         if m["prompt"] and m["code"] == 0:
             problems.append(f"step {n} has a prompt but no code. Show the code the agent wrote, a diff, or the command it ran.")
-        elif has_code and shown * WORDS_PER_LINE < m["prose"]:
-            need = -(-m["prose"] // WORDS_PER_LINE)
+        elif shown + visuals > 0 and carried < m["prose"]:
             problems.append(
-                f"step {n}: {m['prose']} words of prose for {shown} lines of code and output, it needs {need} lines. "
-                f"Cut the prose to {shown * WORDS_PER_LINE} words, move the explanation to its own concept step, or show more real code or output."
+                f"step {n}: {m['prose']} words of prose, but its {shown} lines of code and output and {visuals} visuals carry only {carried}. "
+                f"A line of code or output carries {WORDS_PER_LINE} words, a diagram, chart, video or image {VISUAL_WORDS}. "
+                "Show more real code, output or visuals, or cut the prose."
             )
     if total > LESSON_WORDS:
         problems.append(f"the lesson has {total} words of prose, the limit is {LESSON_WORDS}. Cut it or make two lessons.")
