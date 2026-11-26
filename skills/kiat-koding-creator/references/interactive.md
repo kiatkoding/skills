@@ -2,7 +2,7 @@
 
 An ```interactive fence shows what a still picture cannot: a process playing out in order, a value changing as the learner acts, things moving between places. The lesson page runs it in an isolated frame at the column's width. The frame grows to fit what you draw, and the frame gives you Kiat Koding's design system and a small kit. It counts as one visual for the gate. A step holds at most one interactive, and a lesson at most two.
 
-Use one when moving or touching the idea teaches more than looking at it. Numbers to compare stay a Mermaid chart (`pie`, `xychart-beta`), and a structure with nothing happening in it can stay a Mermaid diagram. Anything that happens in order is an interactive flow. Mermaid `sequenceDiagram` and `stateDiagram` are refused.
+Use one when moving or touching the idea teaches more than looking at it. Every diagram of boxes and arrows is an interactive flow: a process in order plays its stages, and a structure shows its parts one group at a time. Mermaid is for charts only (`pie`, `xychart-beta`): its flowcharts (`flowchart`, `graph`), sequence and state diagrams are refused.
 
 The server checks every interactive an agent saves and refuses it with the reasons. Run `scripts/check_codelab.py` on the steps first, since it makes the same checks.
 

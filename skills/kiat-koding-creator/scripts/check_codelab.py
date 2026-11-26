@@ -8,10 +8,15 @@ including the ```interactive fence, which the server still reads under its old n
 judge: if they disagree, it wins. Change this file together with those two.
 """
 
+import ast
 import json
 import math
+import os
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 
 STEP_WORDS = 1000
 LESSON_WORDS = 3000
@@ -21,6 +26,46 @@ VISUAL_WORDS = 200
 BLOCK_LINES = 10
 # Code fence labels that name no language: code under them was never run, so an ```output after it is made up.
 UNTAGGED = ("", "text", "txt", "plain", "plaintext", "pseudo", "pseudocode")
+
+PYTHON = ("python", "py", "python3")
+JAVASCRIPT = ("javascript", "js", "jsx", "mjs", "cjs", "node")
+NOT_CHECKED_LOCALLY = set()
+
+
+def syntax_error(tag, code):
+    """The first syntax error in code an ```output follows, as (line, text), or None.
+
+    The server parses python, javascript and typescript with tree-sitter. Here Python's own parser checks Python and
+    `node --check` checks JavaScript when Node is installed; TypeScript is left to the server.
+    """
+    lines = code.split("\n")
+    if tag in PYTHON:
+        try:
+            ast.parse(code)
+        except SyntaxError as e:
+            at = e.lineno or 1
+            return at, (lines[at - 1].strip() if at <= len(lines) else "")
+        return None
+    if tag in JAVASCRIPT:
+        node = shutil.which("node")
+        if not node:
+            NOT_CHECKED_LOCALLY.add("javascript (Node is not installed)")
+            return None
+        with tempfile.NamedTemporaryFile("w", suffix=".mjs", delete=False) as f:
+            f.write(code)
+        try:
+            run = subprocess.run([node, "--check", f.name], capture_output=True, text=True, timeout=20)
+        finally:
+            os.unlink(f.name)
+        if run.returncode == 0:
+            return None
+        found = re.search(r":(\d+)\n", run.stderr)
+        at = int(found.group(1)) if found else 1
+        return at, (lines[at - 1].strip() if at <= len(lines) else "")
+    if tag in ("typescript", "ts", "tsx"):
+        NOT_CHECKED_LOCALLY.add("typescript")
+    return None
+
 
 FENCES = ("interactive", "demo")
 MAX_CHARS = 30000
@@ -37,7 +82,8 @@ MIN_TEXT_PX = 11.0
 MOTION_MS = (150.0, 1000.0)
 # Fences whose lines are not the step's code or output.
 NOT_CODE = ("prompt", "mermaid", "video", "interactive", "demo")
-BANNED_MERMAID = ("sequenceDiagram", "stateDiagram")
+# Boxes and arrows are an interactive flow; Mermaid keeps charts.
+BANNED_MERMAID = ("flowchart", "graph", "sequenceDiagram", "stateDiagram")
 SHOWS = ("sequence", "change", "movement", "structure")
 KEYS = ("mode", "shows", "teaches", "task", "answer", "mirrors")
 STEPPER_WORDS = ("berikutnya", "selanjutnya", "sebelumnya", "lanjut", "mundur", "maju", "next", "previous", "prev", "back", "reset")
@@ -157,7 +203,7 @@ def is_list_item(line):
 def measure(body):
     m = {
         "prose": 0, "code": 0, "output": 0, "prompt": False, "images": 0, "diagrams": 0, "interactives": 0,
-        "untagged": 0, "dashes": 0, "long": [], "blocks": [], "joined": [],
+        "untagged": 0, "syntax": [], "dashes": 0, "long": [], "blocks": [], "joined": [],
     }
     s = {"open": 0, "paragraphs": 0, "unexplained": False}
 
@@ -175,7 +221,7 @@ def measure(body):
         s["unexplained"] = s["unexplained"] and w == 0
 
     fence, block = None, 0
-    # The tag of the last fence when it was code, to see what an ```output follows.
+    # The last fence's tag and text when it was code, to see what an ```output follows.
     last_code = None
     for raw in rust_lines(body):
         line = raw.strip()
@@ -186,7 +232,10 @@ def measure(body):
                 if kind == "code":
                     m["blocks"].append(block)
                     s["unexplained"] = True
-            elif line:
+                continue
+            if kind == "code" and last_code is not None:
+                last_code[1].append(raw)
+            if line:
                 if kind == "code":
                     m["code"] += 1
                     block += 1
@@ -203,8 +252,12 @@ def measure(body):
                 kind = "prompt"
             elif tag == "output":
                 s["unexplained"] = False
-                if last_code is not None and last_code in UNTAGGED:
+                if last_code is not None and last_code[0] in UNTAGGED:
                     m["untagged"] += 1
+                elif last_code is not None:
+                    bad = syntax_error(last_code[0], "\n".join(last_code[1]) + "\n")
+                    if bad:
+                        m["syntax"].append((last_code[0],) + bad)
                 kind = "output"
             elif tag in ("mermaid", "video", "interactive", "demo"):
                 m["diagrams"] += 1
@@ -216,7 +269,7 @@ def measure(body):
                     m["joined"].append(len(m["blocks"]) + 1)
                 block = 0
                 kind = "code"
-            last_code = tag if kind == "code" else None
+            last_code = (tag, []) if kind == "code" else None
             fence = (c, n, kind)
             continue
         if "—" in line or " – " in line:
@@ -879,6 +932,10 @@ def check(steps):
             problems.append(
                 f"step {n}: {m['untagged']} code blocks followed by output do not name their language (`text` or empty). Name it, for example python or javascript, and show output from code that really ran."
             )
+        for tag, at, bad in m["syntax"]:
+            problems.append(
+                f"step {n}: the {tag} block followed by output is not valid at line {at} (`{bad}`). Code with output must be whole code that really ran, in one language, not a fragment or a mix."
+            )
         if m["dashes"] > 0:
             problems.append(f"step {n}: the prose uses an em dash or en dash as a separator. Use a comma or a period.")
         if m["prompt"] and m["code"] == 0:
@@ -907,6 +964,8 @@ def main():
     rows, total, problems = check(steps)
     print("\n".join(rows))
     print(f"lesson: {total} words of prose (limit {LESSON_WORDS})")
+    if NOT_CHECKED_LOCALLY:
+        print(f"syntax not checked here: {', '.join(sorted(NOT_CHECKED_LOCALLY))}. The server checks it.")
     if problems:
         print("\nThe gate would refuse this:")
         print("\n".join(f"- {p}" for p in problems))

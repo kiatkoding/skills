@@ -12,9 +12,9 @@ The server checks every codelab an agent saves with `add_lesson` or `update_less
 - Paragraphs of at most 70 words. Each list item counts as its own paragraph.
 - A step with a ```prompt fence also shows the code the agent wrote, a diff, or the command it ran.
 - A code block holds at most 10 lines, and two code blocks never follow each other without prose between them. An ```output block may follow its command directly. Output blocks have no line limit.
-- Prose is carried by what the step shows: every 20 words need a line of code or output, or every 200 words a visual (a Mermaid chart or diagram, an interactive, a video, an image). Prompt, Mermaid, interactive and video lines do not count as code lines. Text alone is refused.
-- An ```interactive follows its own rules (a header, the step's real code or data, motion, the design system), at most one per step and two per lesson. See [interactive.md](interactive.md). Mermaid `sequenceDiagram` and `stateDiagram` are refused.
-- A code block followed by an ```output names its language (python, javascript, bash...), never `text` or nothing.
+- Prose is carried by what the step shows: every 20 words need a line of code or output, or every 200 words a visual (a Mermaid chart, an interactive, a video, an image). Prompt, Mermaid, interactive and video lines do not count as code lines. Text alone is refused.
+- An ```interactive follows its own rules (a header, the step's real code or data, motion, the design system), at most one per step and two per lesson. See [interactive.md](interactive.md). Mermaid is for charts only: flowcharts (`flowchart`, `graph`), sequence and state diagrams are refused, since boxes and arrows are an interactive flow.
+- A code block followed by an ```output names its language (python, javascript, bash...), never `text` or nothing. Python, JavaScript and TypeScript there must parse whole, since only code that ran has output. Code without an output may be a fragment cut at 10 lines.
 - No em dashes or en dashes as separators.
 - A lesson with code shows a real result: an ```output fence or a screenshot.
 
@@ -48,6 +48,8 @@ The refusals that come up most, and what fixes them:
 | An interactive that does not move | Give what changes a transition of 150 to 1000 ms with `var(--ease-out)`, or use a flow. |
 | SVG text too small on a phone | Write the words in HTML around the drawing. |
 | A code block with `text` before an output | Name its language and show the output of actually running it. |
+| A code block before an output that does not parse | Show the whole code you ran, in one language. Show a fragment without an output, then the command and the output of the full file. |
+| A Mermaid flowchart | Write it as an ```interactive flow: rows of nodes, edges and stages. |
 | A paragraph over 70 words | Split it where the second idea starts. |
 | A prompt without code | Show the code the agent wrote, a diff, or the command it ran. |
 
@@ -160,8 +162,8 @@ A step that explains an idea instead of building something needs no code, but it
 
 - An ```interactive flow for anything that happens in order (a request and its response, a build pipeline, an agent loop). In auto mode it plays once as it scrolls into view, ending on the whole diagram. See [interactive.md](interactive.md).
 - An ```interactive for code traced line by line, a value that changes as the learner acts, or an algorithm walking through its data, with a task the learner guesses or reaches first.
-- A Mermaid diagram (`flowchart TD`) only for a structure where nothing happens in order.
-- A chart for numbers, drawn by Mermaid so every number is exact: `pie` for shares, `xychart-beta` for bars or lines (time, cost, accuracy). For dates in order, use a `flowchart TD` with one box per date: Mermaid's `timeline` draws its text too small to read.
+- An ```interactive flow for a structure too (an architecture, the parts of a request): its stages show the parts one group at a time and end on the whole picture.
+- A chart for numbers, drawn by Mermaid so every number is exact: `pie` for shares, `xychart-beta` for bars or lines (time, cost, accuracy). For dates in order, use an ```interactive flow with one node per date: Mermaid's `timeline` draws its text too small to read.
 - An illustration from `generate_lesson_image` for an idea that is hard to picture.
 - A light meme-style panel from `generate_lesson_image` when a joke makes the point stick, such as the moment a learner recognises from their own work. Draw an original joke in the Kiat Koding look. Never copy a known meme template or show a real person.
 
