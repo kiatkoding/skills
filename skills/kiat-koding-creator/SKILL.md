@@ -45,7 +45,7 @@ Lessons open in order, and a Submission must pass before the lessons after it op
 ## Content principles
 
 - Concepts before hands-on. Explain every technical term in plain words where it first appears.
-- Code and real output carry a lesson, prose frames them. A step is the goal in a sentence or two, the prompt or the code, the command, the real output, then a few short notes on the lines that matter. The server refuses codelabs that read long or show little code: see the gate in [references/codelab.md](references/codelab.md).
+- Code and real output carry a lesson, prose frames them. A step is the goal in a sentence or two, the prompt, the code block by block (at most 10 lines each) with a short explanation right under each block, the command, and the real output. The server refuses codelabs that read long or show little code: see the gate in [references/codelab.md](references/codelab.md).
 - Many Kiat Koding courses teach building with a coding agent. In those, give the learner prompts, not code to type, and show the code the agent wrote: prompts in ```prompt fences, the key part of the agent's code under its file name, the result in ```output fences. Explain only the prompt line that carries a decision, and review the agent's code in a few notes.
 - Do not template. Do not repeat the same sub-headings ("Tujuan", "Langkah", "Penjelasan") in every step, and do not describe an image again in prose.
 - Show real things: screenshots from a real run, real output, real numbers. Never fabricate output, screenshots, versions or measurements. If you have not run something, say what to expect in general terms and mark it for the instructor to verify.

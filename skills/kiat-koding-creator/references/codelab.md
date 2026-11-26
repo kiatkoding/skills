@@ -11,6 +11,7 @@ The server checks every codelab an agent saves with `add_lesson` or `update_less
 - At most 250 words of prose per step, and 1,500 per lesson.
 - Paragraphs of at most 70 words. Each list item counts as its own paragraph.
 - A step with a ```prompt fence also shows the code the agent wrote, a diff, or the command it ran.
+- A code block holds at most 10 lines, and two code blocks never follow each other without prose between them. An ```output block may follow its command directly. Output blocks have no line limit.
 - A step with code or a prompt carries a line of code or output for every 20 words of its prose. Prompt, Mermaid and video lines do not count as code.
 - A lesson with code shows a real result: an ```output fence or a screenshot.
 
@@ -30,10 +31,9 @@ Write the beats in this order, as short paragraphs and code blocks, without turn
 
 1. The goal, in one or two sentences: what this step produces and why it is needed now.
 2. The action: the prompt in a ```prompt fence when an agent does the work, or the code the learner writes.
-3. The code. When an agent did the work, show the code it wrote: the part that matters (the function, the request, the config), not the whole file, with its path as the first comment line. A ```diff fence fits a change to existing code.
+3. The code, block by block. When an agent did the work, show the code it wrote: the part that matters (the function, the request, the config), not the whole file. Split it into small blocks, one idea each (the loop, the error branch, the retry), and explain each block right under it in a sentence or two before the next block starts. The code already shows what it does, so the explanation says why it is written that way or what to check. The first block carries the file path as a comment line. A ```diff fence fits a change to existing code.
 4. The command that runs it, in a ```bash fence.
 5. The real output in an ```output fence, or a screenshot when the result is visual.
-6. Two or three short notes on the lines that matter, a sentence or a list item each, naming the line. The code already shows what it does, so a note says why it is written that way or what to check.
 
 When a result often differs (versions, an API's wording, an agent's own choices), add one line on what to check, or a `> [!TIP]`. Background the step does not need belongs in a concept step or a separate reading lesson.
 
@@ -50,7 +50,7 @@ Belum perlu dijalankan ke API, cukup pastikan tidak ada error.
 
 Baris yang menentukan hasilnya: status retry ditulis jelas, 429 dan 529. Tanpa itu, agent bisa ikut mengulang 400, yang pasti gagal lagi.
 
-Ini inti `ask()` yang ditulis agent:
+Agent menulis `ask()` dengan loop retry. Bagian pertama mengirim request:
 
 ```python
 # src/decision_lab/jev.py
@@ -58,17 +58,26 @@ for attempt in range(4):
     try:
         with urlopen(request, timeout=30) as response:
             result = json.load(response)
+```
+
+Loop ini mencoba paling banyak empat kali, dan setiap percobaan menunggu response paling lama 30 detik.
+
+```python
     except HTTPError as exc:
         status = exc.code
         exc.close()
         if status in {429, 529} and attempt < 3:
             time.sleep(2**attempt)
             continue
+```
+
+Hanya 429 dan 529 yang dicoba lagi. `2**attempt` memberi jeda 1, 2, lalu 4 detik.
+
+```python
         raise JevError(f"Jev request failed with HTTP {status}.") from None
 ```
 
-- `2**attempt` memberi jeda 1, 2, lalu 4 detik, jadi paling lama sekitar 7 detik sebelum menyerah.
-- `from None` membuang detail error aslinya, jadi log cuma berisi status HTTP.
+Status lain langsung gagal. `from None` membuang detail error aslinya, jadi log cuma berisi status HTTP.
 
 Cek tanpa nge-call API:
 
@@ -85,7 +94,7 @@ OK
 ```
 ````
 
-About 70 words of prose around 17 lines of code and output.
+About 100 words of prose around 17 lines of code and output, each code block explained before the next one starts.
 
 ## What to cut
 
