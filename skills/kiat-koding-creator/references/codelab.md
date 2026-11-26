@@ -8,7 +8,7 @@ Code and real output carry a codelab. Prose frames them. A learner who skims onl
 
 The server checks every codelab an agent saves with `add_lesson` or `update_lesson`, and refuses it with the full list of problems when it reads long or shows little code. Prose is everything outside fences, tables and image lines.
 
-- At most 250 words of prose per step, and 1,500 per lesson.
+- At most 250 words of prose per step, and 3,000 per lesson.
 - Paragraphs of at most 70 words. Each list item counts as its own paragraph.
 - A step with a ```prompt fence also shows the code the agent wrote, a diff, or the command it ran.
 - A code block holds at most 10 lines, and two code blocks never follow each other without prose between them. An ```output block may follow its command directly. Output blocks have no line limit.
@@ -23,7 +23,7 @@ Fix every point in the refusal and send the lesson again. Changing a lesson's st
 - One step is one task the learner finishes before moving on, and it ends in a result they can see. If a step needs two different results, split it.
 - The title is short and imperative: "Siapkan project", "Minta agent membuat endpoint login", "Uji dengan data kosong".
 - `minutes` is an honest estimate of the time a learner at the course's level needs, including waiting for an agent or a build. Do not round everything to 5.
-- Most codelabs fit in 4 to 8 steps and 15 to 25 minutes. A codelab holds at most 60 steps, but a lesson that needs more than 1,500 words of prose is two lessons.
+- When an explanation needs more room, split it over more steps, one idea per step, each with its own code or visual. Never make a step longer to fit it. A codelab holds at most 60 steps, and a lesson that needs more than 3,000 words of prose is two lessons.
 - The first step says what the learner will have at the end, ideally by showing it (the final output or a screenshot), and what they need ready. The last step sums up what they built and what comes next.
 
 ## Inside a step
