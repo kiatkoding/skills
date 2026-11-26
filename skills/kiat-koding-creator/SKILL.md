@@ -50,7 +50,7 @@ Lessons open in order, and a Submission must pass before the lessons after it op
 - Show real things: screenshots from a real run, real output, real numbers. Never fabricate output, screenshots, versions or measurements. If you have not run something, say what to expect in general terms and mark it for the instructor to verify.
 - Use ```mermaid diagrams for flows and architecture, and `generate_lesson_image` for concept illustrations in the Kiat Koding look.
 - There are no quizzes on the platform. Use a codelab exercise or a Submission instead.
-- Files learners need (datasets, request files, starter code) are downloads the instructor hosts. Ask where, or leave a clear placeholder for the instructor.
+- Files learners need (starter code as a .zip, datasets, request collections, slides) go up with `create_file_upload`, up to 50 MB each. Put the returned link on its own line in the step that uses the file, where it shows as a download card. Without a shell, list the files for the instructor to add in the editor with Unggah file.
 
 ## Writing
 
