@@ -39,7 +39,7 @@ Kiat Koding is an Indonesian course platform for programmers. Instructors build 
 - `video`: when the instructor has a recording. Link it as a YouTube link or ID, an MP4 or WebM link, or an HLS `.m3u8` link. Never invent a video link.
 - `submission`: a graded project, usually at the end of a chapter or of the course. See [references/submission.md](references/submission.md).
 - `exercise` (Latihan): practice items the site draws and scores, such as composing the sentence that reads a piece of code from word tiles, choosing, matching and filling blanks. The learner retries it freely and moves on when ready, which locks it at the best score. Use it after the lessons whose skill it practises, often as a chapter checkpoint. See [references/exercise.md](references/exercise.md).
-- `session` (Sesi 1:1): a call with the instructor that the learner books and pays for apart from the course, or skips. Add one only when the creator asks for it, with the price, length and free hours they give you. It stays closed until they confirm it in the admin. See [references/session.md](references/session.md).
+- `session` (Sesi 1:1): a call with the instructor that the learner books and pays for apart from the course, or skips. Add one only when the creator asks for it, with the price, length and free hours they give you. It opens to bookings with its course. See [references/session.md](references/session.md).
 - Live sessions are added by the instructor in the admin.
 
 Lessons open in order: a Submission must pass, and a Latihan must be locked (with `min_score` reached when it has one), before the lessons after it open. A Sesi 1:1 never holds the rest back. Place them where that makes sense. With the instructor's agreement, mark the first lesson or two `is_preview` so visitors can try them before buying.
@@ -85,6 +85,6 @@ Lesson bodies, codelab steps and Submission briefs are Markdown with GitHub tabl
 - Every term is explained where it first appears, and nothing claims a result you did not see.
 - Prompts are in ```prompt fences and expected results in ```output fences.
 - Submissions have a brief and milestones written as described in the Submission reference.
-- Every Sesi 1:1 has the price, length and hours the creator gave, and the creator knows to confirm it in the admin.
+- Every Sesi 1:1 has the price, length and hours the creator gave.
 - The writing follows the style reference.
 - You gave the `admin_url` and the list of what is left for the instructor.

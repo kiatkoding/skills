@@ -20,13 +20,13 @@ A Sesi 1:1 is a lesson of kind `session`: a video call with the course's instruc
 - The header art is picked by the site from its own illustrations; there is no image to send for it.
 - `hours`: leave it out to use the instructor's schedule, which they set once in the admin and which every session of theirs shares. Send it only when this lesson should have its own free hours: a list of `{ "day": 1, "from": "19:00", "to": "21:00" }`, `day` 1 Monday to 7 Sunday, times in WIB. `get_lesson` shows the instructor's schedule as `session.instructor_hours`; when it is empty you must send `hours`.
 
-Slots are the free hours cut into sessions of `minutes` with a 15-minute break after each, from 12 hours ahead to 30 days out, minus what the instructor already has (other sessions, live sessions).
+Slots are the free hours cut into sessions of `minutes` with a 15-minute break after each, from 12 hours ahead to 30 days out, minus what the instructor already has (other sessions, live sessions). When none are left the page says the instructor is full, and when the nearest is two weeks or more away it says so before showing the times. Hours that are too narrow fill up fast, so tell the creator if theirs look tight.
 
 ## The creator decides the terms
 
 - Ask the creator what to charge, how long a session runs and when they are free before you add one. Never pick a price, a length or hours yourself, and never add a session the creator did not ask for.
 - You cannot choose the payment method: a session takes the course's own.
-- A session you add, or whose price, length or hours you change, stays closed to bookings until the creator opens the lesson in the admin and saves it. The answer's `session.confirmed` is then false. Tell the creator this and give them `session.admin_url`. Changing only `scope` or `prepare` keeps it open.
+- A session opens to bookings with its course: while the course is published, unlisted or private. While it is a draft or archived, or the lesson is private, nobody can book, and sessions already booked are called off (the calendar event is removed and a paid session stays as credit for a new time). Tell the creator the terms you saved and give them `session.admin_url` to check them.
 
 ## Example
 
