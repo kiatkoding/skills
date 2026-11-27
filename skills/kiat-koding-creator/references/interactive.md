@@ -26,7 +26,7 @@ for price in prices:
 - `mode`: `interactive` when the learner acts, `auto` when it plays once by itself as it scrolls into view.
 - `shows`: what happens in it, one or more of `sequence` (things in order), `change` (a value changes), `movement` (things move between places), `structure` (nothing changes). The server compares it with what the interactive does.
 - `teaches`: one sentence, at most 25 words, on what it makes visible.
-- `task`: interactive mode only, at most 30 words. The frame shows it at the top. It is either a question the learner guesses before acting (ending with ?, shown as "Tebak dulu") or a goal to reach (shown as "Coba"). Auto mode has no task.
+- `task`: interactive mode only, at most 30 words. The frame shows it at the top. It is either a question the learner guesses before acting (ending with ?, shown as it is) or a goal to reach (shown as "Coba"). Auto mode has no task.
 - `answer`: required when the task is a question. A numeric answer must not be readable before the learner acts.
 - `mirrors`: required when the step has code or output blocks. List lines copied exactly from them that the interactive shows. A code line must appear in the interactive as written, with the same names and values. An output line may be computed by the interactive, but its names and numbers must be there.
 
