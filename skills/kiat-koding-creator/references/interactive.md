@@ -36,7 +36,7 @@ Use the kit instead of building your own. The server refuses hand-made next, bac
 
 ### Flow diagrams
 
-A flow is data, not drawing. The kit draws it in the house style: boxes top to bottom, arrows drawn as each stage reveals them, and arrows going back up in their own lanes at the right. Auto mode plays it once when it is visible. Interactive mode steps through it with Sebelumnya and Berikutnya.
+A flow is data, not drawing. The kit draws it in the house style: boxes top to bottom, arrows drawn as each stage reveals them, and every label on its own arrow with room made for it. Arrows between neighbouring rows run in the gap between them, both ways, a reply beside its request. Arrows that skip a row or go further back up run in lanes at the right. You never place anything yourself. Auto mode plays it once when it is visible. Interactive mode steps through it with Sebelumnya and Berikutnya.
 
 ```html
 <script type="application/json" data-kk="flow">
