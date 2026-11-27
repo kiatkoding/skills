@@ -14,6 +14,7 @@ A Sesi 1:1 is a lesson of kind `session`: a video call with the course's instruc
 
 - `minutes`: the length, 15 to 180, a multiple of 5.
 - `price_idr`: the price of one session in rupiah, 0 for free.
+- `photo`: the instructor's photo in the page's header. `"google"` for their Google profile photo, or the `/uploads/images/` path of a photo the creator gives you, uploaded with `create_image_upload`. Ask the creator which. Their choice becomes the default for their later sessions; leave it out to use that default, which `get_lesson` shows as `session.photo_default`.
 - `agenda`: Markdown on what the session is for and how to prepare. Keep it short and general: the AI takes it as the direction for each learner's topics, so do not list topics yourself.
 - `hours`: leave it out to use the instructor's schedule, which they set once in the admin and which every session of theirs shares. Send it only when this lesson should have its own free hours: a list of `{ "day": 1, "from": "19:00", "to": "21:00" }`, `day` 1 Monday to 7 Sunday, times in WIB. `get_lesson` shows the instructor's schedule as `session.instructor_hours`; when it is empty you must send `hours`.
 
