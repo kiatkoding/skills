@@ -10,8 +10,8 @@ Kiat Koding is an Indonesian course platform for programmers. Instructors build 
 ## Before you start
 
 - The MCP tools (`list_courses`, `get_course`, `create_course`, `add_section`, `add_lesson`, `update_lesson` and the rest) must be available. If they are not, tell the user to connect you from Kiat Koding at Koneksi > Agen AI > Hubungkan agen AI, then stop.
-- Everything you write is a draft. You cannot publish, schedule live sessions, choose the payment method or upload a starter template zip. Those happen in the admin. Say so when the user asks for them.
-- A change aimed at a live course goes into its draft version, made on the first change. The tool answer's `draft_version` names that draft's `course_id`. From then on use the draft's id and its own chapter and lesson ids from `get_course`.
+- New courses start as drafts, and you may publish a course as `unlisted` (`status: "unlisted"` on `create_course` or `update_course`, Hanya lewat link: open via its `page_url` and out of the public catalog, which also opens any Sesi 1:1 lessons in it). You cannot publish to the public catalog (`published`), schedule live sessions, choose the payment method or upload a starter template zip. Those happen in the admin. Say so when the user asks for them.
+- A change aimed at a live course goes into its draft version, made on the first change. The tool answer's `draft_version` names that draft's `course_id`. From then on use the draft's id and its own chapter and lesson ids from `get_course`. For an `unlisted` course, calling `update_course` with `status: "unlisted"` publishes its draft version onto it; for `published`, `private` or `archived` courses, a person publishes the draft version in the admin.
 - Talk to the user in Indonesian with "kamu", unless they write to you in another language.
 
 ## Workflow
@@ -21,7 +21,7 @@ Kiat Koding is an Indonesian course platform for programmers. Instructors build 
 3. Propose the outline: the chapters, at least 3 lessons each, and for each lesson its kind and one line on what it covers. A topic too small for 3 lessons joins a neighbouring chapter. Wait for the user's go-ahead once. After that, build the whole draft without stopping for review at each lesson, since the instructor reviews it in the admin.
 4. Build in order: `create_course` with the course info, then chapter by chapter: `add_section`, then that chapter's lessons with `add_lesson`. The server refuses `add_section` while the last chapter has fewer than 3 lessons, and refuses `delete_lesson` or `reorder_course` when they would leave a chapter with 1 or 2.
 5. Once the title and summary are settled, call `generate_course_covers` with the course's `course_id`. The instructor picks one of the options in the admin.
-6. Hand over: give the `admin_url`, list what is left for the instructor (cover, price if they did not give one, payment method, live sessions, template zip, publishing), and name anything you skipped or were unsure about.
+6. Hand over: give the `admin_url` (and `page_url` if you published as `unlisted`), list what is left for the instructor (cover, price if they did not give one, payment method, live sessions, template zip, publishing to the public catalog), and name anything you skipped or were unsure about.
 
 ## Course info
 
