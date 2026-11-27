@@ -38,9 +38,10 @@ Kiat Koding is an Indonesian course platform for programmers. Instructors build 
 - `codelab`: anything the learner does or reads, such as building, configuring, practising, or concepts, background and comparisons. There is no text lesson kind: a reading lesson is a codelab with one step per section, and a short one may be a single step. See [references/codelab.md](references/codelab.md).
 - `video`: when the instructor has a recording. Link it as a YouTube link or ID, an MP4 or WebM link, or an HLS `.m3u8` link. Never invent a video link.
 - `submission`: a graded project, usually at the end of a chapter or of the course. See [references/submission.md](references/submission.md).
+- `exercise` (Latihan): practice items the site draws and scores, such as composing the sentence that reads a piece of code from word tiles, choosing, matching and filling blanks. The learner retries it freely and moves on when ready, which locks it at the best score. Use it after the lessons whose skill it practises, often as a chapter checkpoint. See [references/exercise.md](references/exercise.md).
 - Live sessions are added by the instructor in the admin.
 
-Lessons open in order, and a Submission must pass before the lessons after it open. Place Submissions where that makes sense. With the instructor's agreement, mark the first lesson or two `is_preview` so visitors can try them before buying.
+Lessons open in order: a Submission must pass, and a Latihan must be locked (with `min_score` reached when it has one), before the lessons after it open. Place them where that makes sense. With the instructor's agreement, mark the first lesson or two `is_preview` so visitors can try them before buying.
 
 ## Content principles
 
@@ -50,7 +51,7 @@ Lessons open in order, and a Submission must pass before the lessons after it op
 - Do not template. Do not repeat the same sub-headings ("Tujuan", "Langkah", "Penjelasan") in every step, and do not describe an image again in prose.
 - Show real things: screenshots from a real run, real output, real numbers. Never fabricate output, screenshots, versions or measurements. If you have not run something, say what to expect in general terms and mark it for the instructor to verify.
 - Every step shows more than text. Concept steps carry a visual instead of code: an ```interactive flow for anything that happens in order (it plays once as it scrolls into view), an ```interactive for a value that changes as the learner acts or code traced line by line, Mermaid `pie` or `xychart-beta` charts for numbers, and `generate_lesson_image` for illustrations or a light meme-style panel in the Kiat Koding look.
-- There are no quizzes on the platform. Use a codelab exercise or a Submission instead.
+- Practice that needs a score is a Latihan, not questions written into a codelab step.
 - Files learners need (starter code as a .zip, datasets, request collections, slides) go up with `create_file_upload`, up to 50 MB each. Put the returned link on its own line in the step that uses the file, where it shows as a download card. Without a shell, list the files for the instructor to add in the editor with Unggah file.
 
 ## Writing
