@@ -15,7 +15,9 @@ A Sesi 1:1 is a lesson of kind `session`: a video call with the course's instruc
 - `minutes`: the length, 15 to 180, a multiple of 5.
 - `price_idr`: the price of one session in rupiah, 0 for free.
 - `photo`: the instructor's photo in the page's header. `"google"` for their Google profile photo, or the `/uploads/images/` path of a photo the creator gives you, uploaded with `create_image_upload`. Ask the creator which. Their choice becomes the default for their later sessions; leave it out to use that default, which `get_lesson` shows as `session.photo_default`.
-- `agenda`: Markdown on what the session is for and how to prepare. Keep it short and general: the AI takes it as the direction for each learner's topics, so do not list topics yourself.
+- `scope` (required): what the session is about, 1 to 5 lines of plain Indonesian, each at most 160 characters. The page lists them under its own heading, so write no heading, list marker, line break or Markdown (inline `code` is fine), and no em dashes. Keep them general: the AI takes them as the direction for each learner's topics.
+- `prepare` (optional): how to come prepared, one plain sentence or two, at most 400 characters, under the page's own heading.
+- The header art is picked by the site from its own illustrations; there is no image to send for it.
 - `hours`: leave it out to use the instructor's schedule, which they set once in the admin and which every session of theirs shares. Send it only when this lesson should have its own free hours: a list of `{ "day": 1, "from": "19:00", "to": "21:00" }`, `day` 1 Monday to 7 Sunday, times in WIB. `get_lesson` shows the instructor's schedule as `session.instructor_hours`; when it is empty you must send `hours`.
 
 Slots are the free hours cut into sessions of `minutes` with a 15-minute break after each, from 12 hours ahead to 30 days out, minus what the instructor already has (other sessions, live sessions).
@@ -24,7 +26,7 @@ Slots are the free hours cut into sessions of `minutes` with a 15-minute break a
 
 - Ask the creator what to charge, how long a session runs and when they are free before you add one. Never pick a price, a length or hours yourself, and never add a session the creator did not ask for.
 - You cannot choose the payment method: a session takes the course's own.
-- A session you add, or whose price, length or hours you change, stays closed to bookings until the creator opens the lesson in the admin and saves it. The answer's `session.confirmed` is then false. Tell the creator this and give them `session.admin_url`. Changing only the agenda keeps it open.
+- A session you add, or whose price, length or hours you change, stays closed to bookings until the creator opens the lesson in the admin and saves it. The answer's `session.confirmed` is then false. Tell the creator this and give them `session.admin_url`. Changing only `scope` or `prepare` keeps it open.
 
 ## Example
 
@@ -35,6 +37,11 @@ Slots are the free hours cut into sessions of `minutes` with a 15-minute break a
   "kind": "session",
   "minutes": 45,
   "price_idr": 150000,
-  "agenda": "Kita bahas project dari bab 1 sampai 3: bagian yang masih bikin bingung dan langkah berikutnya. Siapkan link repo kamu."
+  "scope": [
+    "Review bagian bab 1 sampai 3 yang masih membingungkan",
+    "Membaca satu potongan kode bareng instruktur",
+    "Langkah berikutnya untuk project kamu"
+  ],
+  "prepare": "Siapkan link repo project kamu."
 }
 ```
